@@ -1,5 +1,7 @@
 from django.http import JsonResponse
 from django.core.paginator import Paginator
+from rest_framework.decorators import api_view,permission_classes
+from rest_framework.permissions import IsAuthenticated
 
 
 portfolio_entries = [
@@ -26,7 +28,8 @@ portfolio_entries = [
     },
 ]
 
-
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def portfolio_data(request):
     try:
        
