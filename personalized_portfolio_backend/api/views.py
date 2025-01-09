@@ -31,6 +31,8 @@ portfolio_entries = [
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def portfolio_data(request):
+    user =request.user
+    filtered_entries = [entry for entry in portfolio_entries if entry["name"] == user.username]
     try:
        
         search_query = request.GET.get("search", "").lower()
