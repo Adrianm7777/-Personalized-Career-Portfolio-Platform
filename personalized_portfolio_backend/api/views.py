@@ -2,6 +2,9 @@ from django.http import JsonResponse
 from django.core.paginator import Paginator
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.http import JsonResponse
+from django.contrib.auth import authenticate
 
 
 portfolio_entries = [
@@ -60,3 +63,29 @@ def portfolio_data(request):
         return JsonResponse({"results": list(paginated_data), "total": paginator.count}, safe=False)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
+@api_view(["POST"])
+def login_view(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+
+    user = authenticate(username=username,password=password)
+    if user is not None:
+        refresh = RefreshToken.for_user(user)
+
+        response = JsonResponse({"message": "Login successful!"})
+
+        response.set_cookie(key="access_token",value=str(refresh.access_token), httponly=True, samesite="Strict", secure=True)
+
+        response.set_cookie(key="refresh_token", value=str(refresh),httponly=True,samesite="Strict",secure=True)
+
+        return response
+    else:
+            return JsonResponse({"error": "Invalid credentials"}, status=401)
+    
+@api_view(["POST"])
+def logout_view(request):
+    response = JsonResponse({"message": "Logged out successfully!"})
+    response.delete_cookie("access_token")
+    response.delete_cookie("refresh_token")
+    return response
