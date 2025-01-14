@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const page = () => {
+const Login = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-500 to-indigo-900 flex items-center justify-center px-4">
       <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-8">
@@ -65,4 +65,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Login;
