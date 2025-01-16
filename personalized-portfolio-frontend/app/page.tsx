@@ -6,9 +6,7 @@ const Home = async ({
 }: {
   searchParams: { search?: string; sort?: string; order?: string };
 }) => {
-  const search = searchParams.search || "";
-  const sort = searchParams.sort || "id";
-  const order = searchParams.order || "asc";
+  const { search = "", sort = "id", order = "asc" } = await searchParams;
 
   let portfolios: IPortfolioData[] = [];
   try {
