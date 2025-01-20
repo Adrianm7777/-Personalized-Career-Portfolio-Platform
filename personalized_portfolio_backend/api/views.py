@@ -5,6 +5,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.http import JsonResponse
 from django.contrib.auth import authenticate
+from django.core.exceptions import ValidationError
+from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.models import User
 
 
 portfolio_entries = [
@@ -89,3 +92,33 @@ def logout_view(request):
     response.delete_cookie("access_token")
     response.delete_cookie("refresh_token")
     return response
+
+@api_view(["POST"])
+def sign_up(request):
+     username = request.data.get("username")
+     email = request.data.get("email")
+     password = request.data.get("password")
+
+     if not username or not email or not password:
+          return JsonResponse({"error":"All fields are required."},status=400)
+     
+     try:
+          validate_password(password)
+     except ValidationError as e:
+          return JsonResponse({"error":e.message}, status= 400)
+          
+     if User.objects.filter(username=username).exists():
+          return JsonResponse({"error": "Username already taken."},status=400)
+     
+     if User.objects.filter(email=email).exists():
+        return JsonResponse({"error": "Email already in use."},status=400)
+     
+     user = User.objects.create_user(username=username,email=email,password=password)
+
+     refresh =RefreshToken.for_user(user)
+
+     response = JsonResponse({"message": "User registered successfully!"})
+     response.set_cookie(key="access_token",value=str(refresh.access_token),httponly=True,samesite="Strict",secure=True)
+     response.set_cookie(key="refresh_token",value=str(refresh),httponly=True, samesite="Strict",secure=True)
+
+     return response
