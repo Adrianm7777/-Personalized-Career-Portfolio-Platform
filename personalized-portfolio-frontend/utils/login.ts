@@ -1,4 +1,6 @@
-export const loginHandler = async (username: string, password: string) => {
+import { IValidationData } from "@/types/types";
+
+export const loginHandler = async ({ username, password }: IValidationData) => {
   try {
     const response = await fetch("http://127.0.0.1:8000/api/login/", {
       method: "POST",

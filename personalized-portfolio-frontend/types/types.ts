@@ -5,3 +5,9 @@ export interface IPortfolioData {
   skills: string[];
   experience: number;
 }
+
+export interface IValidationData {
+  username: string;
+  email?: string;
+  password: string;
+}

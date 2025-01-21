@@ -16,7 +16,7 @@ const LoginForm = () => {
     const username = formData.get("username")?.toString() || "";
     const password = formData.get("password")?.toString() || "";
 
-    const result = await loginHandler(username, password);
+    const result = await loginHandler({ username, password });
     setLoading(false);
 
     if (result.success) {
